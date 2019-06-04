@@ -133,10 +133,10 @@ char * task_3b(int monitor_duration){
 		memset(to_be_printed_elems, 0, sizeof(to_be_printed_elems));
 		time_flag=1;
     }
-
     char *biggest_string="";
     for(int i=0;i<strs_captured;i++){
     	if( strlen(strings_captured[i]) > strlen(biggest_string)){
+    		printf("%ld\n",strlen(strings_captured[i]));
     		biggest_string = strings_captured[i];
     	}
     }

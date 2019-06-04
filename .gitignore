@@ -1,7 +1,7 @@
 # ignore all object files
 src/*.o
 src/*.so
-*.log
+src/*.log
 #ignore all executable files
 src/probe
 src/probe_plot
