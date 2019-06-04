@@ -35,7 +35,7 @@ autoprobe.o: probe.c probe.h libnumberpic.h
 run_probe: probe
 	taskset -c 0 ./probe
 
-plot: Probe-numbers[5].csv Probe-numbers[5].csv plotter.py
+plot: data.csv plotter.py
 	python3 plotter.py
 
 clean:
