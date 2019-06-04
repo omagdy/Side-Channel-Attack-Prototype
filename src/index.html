@@ -1,0 +1,52 @@
+<html>
+<head>
+	<script src="jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+<h1>CloudSecurity Cache Side Channel Test Server</h1>
+<form id="form" target="#">
+	First: Enter a number in the input field <input type="text" value="1234" id="input"><br>
+	Second: Click "submit": <input type="submit" value="Submit">
+</form>
+
+<img src="" id="image">
+
+<script>
+	$(function() {
+		var a = "";
+		var length = 0;
+		var now = 0;
+		var pause = 4;
+		var interval = null;
+
+		function loadImage() {
+			a = $("#input").val();
+			length = a.length;
+			
+			if(now < length) {
+				var date = new Date(); 
+				var timestamp = date.getTime();
+				var tmp = a.substring(0, now + 1)
+				console.log(tmp+".png?dummy="+timestamp);
+				$("#image").attr("src", tmp+".png?dummy="+timestamp);
+				now++;
+			}
+			else {
+				pause--;
+				if(pause == 0) {
+					pause = 4;
+					now = 0;
+				}
+			}
+		}
+
+		$("#form").submit(function(event){
+			clearInterval(interval);
+			interval = window.setInterval(loadImage, 1000);
+			return false;
+		});
+	});
+</script>
+</body>
+</html>
