@@ -9,7 +9,9 @@
 
 #include "probe.h"
 
-#define TIME_LOOP_THRESHOLD (200) 		// Time for capturing image numebrs, in Microseconds
+#define TIME_LOOP_THRESHOLD (50) 		// Time for capturing image numebrs, in Microseconds
+
+char biggest_string[100];				//detected string
 
 void task_3a(){
 	int i;
@@ -26,7 +28,7 @@ void task_3a(){
     int number_detected_array[numbers_size];
     int access_detected;
 
-    DETECTION_THRESHOLD = determing_tsc_threshold();
+    DETECTION_THRESHOLD = determing_tsc_threshold(1000);
 
     while(LOOPFOREVER)
     {
@@ -78,8 +80,6 @@ void set_loop_exit(int alrm_sig)
 
 char * task_3b(int monitor_duration){
 
-    // int guessed_number = -1;
-
     // Using signal and alarm method to run loop for given seconds
     signal(SIGALRM, set_loop_exit);
     
@@ -89,14 +89,17 @@ char * task_3b(int monitor_duration){
 	uint64_t pr_i_time;
 	int to_be_printed=0;
 	int to_be_printed_elems[50];
-	int strs_captured=0;
-	char *strings_captured[50];
 	char snum[50];
+
+	// Used to determine which is the biggest string detected in an image
+	int string_size;
+	int biggest_string_s = 0;
+
 	struct timespec start, end;
 	uint64_t delta_us;
 	int time_flag=1;
 	int tsc_threshold;
-	tsc_threshold = determing_tsc_threshold();
+	tsc_threshold = determing_tsc_threshold(1000);
 
     while(exit_loop==0)
     {   
@@ -118,27 +121,24 @@ char * task_3b(int monitor_duration){
 			}
 		}
 		if(to_be_printed!=0){
-					strs_captured++;
 					char tmp[50]="";
+					string_size=0;
 					printf("Access:\t");
 					for(int i=0; i<to_be_printed;i++){
 						printf("[%d],  ", to_be_printed_elems[i]);
 						sprintf(snum, "%d",to_be_printed_elems[i]);
 						strcat(tmp, snum);
+						string_size++;
 						}
 						printf("\n");
-					strings_captured[strs_captured-1]=tmp;
+					if(string_size > biggest_string_s){
+						biggest_string_s = string_size;
+						strcpy(biggest_string, tmp);
+					}
 		}
 		to_be_printed=0;
 		memset(to_be_printed_elems, 0, sizeof(to_be_printed_elems));
 		time_flag=1;
-    }
-    char *biggest_string="";
-    for(int i=0;i<strs_captured;i++){
-    	if( strlen(strings_captured[i]) > strlen(biggest_string)){
-    		printf("%ld\n",strlen(strings_captured[i]));
-    		biggest_string = strings_captured[i];
-    	}
     }
 
     return biggest_string;
@@ -162,16 +162,7 @@ int main(int argc, char *argv[]) {
 
         guessed_number = task_3b(monitor_duration);
 
-        printf("%s\n", guessed_number);
-
-        // if (guessed_number > 0)
-        // {
-        //     printf("Guessed Number is [%d] \n", guessed_number);
-        // }else
-        // {
-        //     printf("Failed to guess number!\n");
-        // }
-
+        printf("Number is %s\n", guessed_number);
         
     }
 
