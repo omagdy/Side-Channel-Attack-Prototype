@@ -1,0 +1,96 @@
+Group Number : 20
+Group Members : Omar Hussein (90803), Ahmer Ali (87627)
+
+Code API
+========
+
+
+Function: determing_tsc_threshold
+
+	Parameters
+	----------
+	    loops : int
+	        number of loops to determine average
+
+	Returns
+	-------
+	    Long long unsigned integer type 
+	        Average cache hit cycles
+
+Function: flush
+
+	Parameters
+	----------
+	    addr : const void pointer
+	        Target memory address pointer
+
+	Returns
+	-------
+	    None
+
+Function: reload
+
+	Parameters
+	----------
+	    addr : const void pointer
+	        Target memory address pointer
+
+	Returns
+	-------
+	    Long long unsigned integer type 
+	        Numer of cycles taken to load the given address
+
+
+Solution Description
+====================
+
+	-Part 1:
+
+		Goal of this task is writing reload and flush functions that will later help in performing the cache based flush and reload side-channel attach on a given shared library. The descriptions for these functions are as follows:
+
+		Flush:
+			This inline function is meant to remove a given memory address from all cache levels of a cpu. We do this by using embedded assembly code to call the built in csflush directive.
+
+		Reload:
+			The purpose of this function is to obtain the correct number of the cpu counter cycles it takes to read a given memory address. This is also acheived by embedding assembly code that invokes RDTSC command to obtain counter cycles at a given moment. The RDTSC is called before and after simulating a memory read for the given address. The difference in cycle counts is returned.
+
+			We also have to surround our  before and after RDTSC instructions by LFENCE instructions which force the cpu to finish any other pending operations which might temper with out exact cycle count reading. Doing this ensures that only the memory access to the pointer was performed between the two RDTSC commands.
+
+	-Part 2a:
+
+		In the sample shared library, the vulnerability is presence of an  externally available variable called numbers in library header file. This variable can be exploited by reading its address and measuring its access times using our flush and reload functions. If another victim program was calling this variable, it will load significantly faster during our flush and reload attack compared to when its not in use. This difference can indicate usage of certain functions inside the vulnerable shared library.
+
+		In this part we provide a proof such load time difference with and without a victim function running. Also the test is repeated on different systems and different cores of a single system.
+
+		Execution: 
+			After modifying probe.c file to run only "task_2_a();" call in main, run commands:
+				./probe 
+				python plotter.py
+
+	-Part 2b:
+
+		"placenum" is a function that is called every time an image is requested from the library. The function executes as many times as the number of digits requested to be printed on the png.
+
+		We detect these calls by continuously monitoring access cycles for all indexes of the "numbers" array. All the indexes with a time similar to cache hit time correspond to a "placenum" call. We detect a generic cache hit time by averaging a number of forced cache hits and use it as a threshold.
+
+		Execution:
+			After modifying probe.c to run only "task_2_b();" in main, we run probe as:
+				./probe
+				./test 1 (or other sample victim processes)
+			Upon every detected access, "Access" should be printed on screen.
+
+	-Part 3a:
+		
+		Goal is to detect all the numbers that were requested to be printed on a certain png in a given instance. We detect this by continously monitoring whole range of "numbers" array. All the numbers with a significantly faster load duration correspond to the exact number requested to be printed on png by a given victim process.
+
+		Execution:
+			Calling autoprobe without any command line arguments
+				./autoprobe
+
+	-Part 3b:
+
+		Goal is to monitor "numbers" array for a given time and detect the correct number requested. Our flush and reload method is fast enough to detect the requested numbers in order of as they are placed in cache. We save these numbers in their order for every moment until the given time expires. At the end we try to pick out the largest most repeating sequence which is most likely to be the desired number.
+
+		Execution:
+			Calling autoprobe with number of seconds as a command line argument
+				./autoprobe 15 (this will monitor for 15 seconds)

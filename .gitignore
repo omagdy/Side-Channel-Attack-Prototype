@@ -13,3 +13,4 @@ src/test
 Probe-with* 
 Probe-numbers*
 test.png
+src/*.csv
