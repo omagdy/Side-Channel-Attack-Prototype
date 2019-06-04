@@ -9,9 +9,6 @@
 #include "probe.h"
 
 #define ITERATION_COUNT (1000) 				// Used for part 2a
-#define TIME_LOOP_THRESHOLD (10000000000)	// Microseconds
-#define LOOP_WAIT (5)
-
 
 
 void print_results_to_file(char *nme, uint64_t *arr){
