@@ -81,7 +81,7 @@ uint64_t inline __attribute__((always_inline)) flush_and_reload(const void* addr
 }
 
 
-// This is not an inline function, it should not be in header file
+// Should be in a library of its own
 uint64_t determing_tsc_threshold(int loops){
 
 	const void* addr;
