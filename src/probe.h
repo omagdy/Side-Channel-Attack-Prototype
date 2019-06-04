@@ -82,12 +82,12 @@ uint64_t inline __attribute__((always_inline)) flush_and_reload(const void* addr
 
 
 // This is not an inline function, it should not be in header file
-uint64_t determing_tsc_threshold(){
+uint64_t determing_tsc_threshold(int loops){
 
 	const void* addr;
 
-	int j = 1000;
-	uint64_t avg_time_cache_hit=0;//, avg_time_cache_miss=0;
+	int j = loops;
+	uint64_t avg_time_cache_hit=0;
 	junk_first_time_miss = 0;
 
 	for(int i =0;i<NUMBER_OF_ELEMENTS_IN_ARRAY;i++){
@@ -100,7 +100,6 @@ uint64_t determing_tsc_threshold(){
 			addr = numbers[i];
 			avg_time_cache_hit = avg_time_cache_hit+reload(addr);
 		}
-
 		j--;
 	}
 
@@ -109,7 +108,7 @@ uint64_t determing_tsc_threshold(){
 		flush(addr);
 	}
 
-	return ((avg_time_cache_hit)/12000) + TSC_THRESHOLD_UPPER_LIMIT;
+	return ((avg_time_cache_hit)/(loops*NUMBER_OF_ELEMENTS_IN_ARRAY)) + TSC_THRESHOLD_UPPER_LIMIT;
 }
 
 

@@ -35,11 +35,6 @@ void task_2_a(){
 
 	uint64_t pr_5_time[ITERATION_COUNT];
 	uint64_t pr_7_time[ITERATION_COUNT];
-	// ptr5 = (char *)malloc(sizeof(numbers[5]));
-	// ptr5 = numbers[5];
-	// pr_7_time[i] = reload(ptr7);
-	// ptr7 = (char *)malloc(sizeof(numbers[7]));
-	// ptr7 = numbers[7];
 
 	for(int i=0; i<ITERATION_COUNT; i++){
 		pr_7_time[i] = reload(numbers[7]);
@@ -66,14 +61,14 @@ void task_2_b(){
     int access_detected = 0;
 
     // Determine detection threshold
-    int DETECTION_THRESHOLD = determing_tsc_threshold();
+    int DETECTION_THRESHOLD = determing_tsc_threshold(1000);
+    int threshold_counter = 0;
 
     while(LOOPFOREVER){
             for (int i = 0; i < numbers_size; ++i)
             {
                 numbers_addr = numbers[i+1];
                 number_access_time = flush_and_reload(numbers_addr);
-                // printf("Access for [%d], Time:%lu\n", i, number_access_time);
 
                 if(number_access_time < DETECTION_THRESHOLD){
                     access_detected = 1;
