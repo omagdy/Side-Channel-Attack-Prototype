@@ -1,7 +1,7 @@
 # ignore all object files
 src/*.o
 src/*.so
-
+*.log
 #ignore all executable files
 src/probe
 src/probe_plot
@@ -9,6 +9,7 @@ src/autoprobe
 src/web
 src/test
 
-#ignore all temporary files
-src/test.png
-src/data.csv
+
+Probe-with* 
+Probe-numbers*
+test.png
