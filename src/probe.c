@@ -97,7 +97,6 @@ void task_2_b(){
 				tsc_flag=0;
 			}
 		}
-		printf("Adjusted Threshold\n");
 		DETECTION_THRESHOLD = determing_tsc_threshold(100);
 
     }

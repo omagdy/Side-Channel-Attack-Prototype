@@ -89,9 +89,7 @@ void task_3a(){
 				tsc_flag=0;
 				}
 		}
-
 		DETECTION_THRESHOLD = determing_tsc_threshold(100);
-
     }
 }
 
