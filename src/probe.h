@@ -14,6 +14,7 @@
 # include <x86intrin.h>
 #endif
 
+
 #define TSC_THRESHOLD_UPPER_LIMIT (50)		// Added to Average cache hit to calculate TSC Threshold
 #define NUMBER_OF_ELEMENTS_IN_ARRAY (11)	// Size of numbers[] which we cache attack
 
