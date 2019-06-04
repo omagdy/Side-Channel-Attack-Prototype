@@ -8,8 +8,8 @@
 
 #include "probe.h"
 
-#define ITERATION_COUNT (1000) 				// Used for part 2a
-
+#define ITERATION_COUNT (1000) 					// Used for part 2a
+#define THRESHOLD_RENEWAL_LOOP (15000000)		// Microseconds
 
 void print_results_to_file(char *nme, uint64_t *arr){
 	int j=0;
@@ -62,9 +62,19 @@ void task_2_b(){
 
     // Determine detection threshold
     int DETECTION_THRESHOLD = determing_tsc_threshold(1000);
-    int threshold_counter = 0;
+
+	struct timespec start, end;
+	uint64_t delta_us;
+	int tsc_flag;
+
 
     while(LOOPFOREVER){
+
+    		clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    		tsc_flag=1;
+
+    		while(tsc_flag){
+
             for (int i = 0; i < numbers_size; ++i)
             {
                 numbers_addr = numbers[i+1];
@@ -80,12 +90,32 @@ void task_2_b(){
                 printf("Access\n");
             }
             access_detected = 0;
+
+			clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+			delta_us = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000; //microseconds
+			if(delta_us>THRESHOLD_RENEWAL_LOOP){
+				tsc_flag=0;
+			}
+		}
+		printf("Adjusted Threshold\n");
+		DETECTION_THRESHOLD = determing_tsc_threshold(100);
+
     }
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
-	// task_2_a();
-	task_2_b();
+
+    if(argc<=1) 
+    { 
+        task_2_b();
+
+    }else
+    {
+    	task_2_a();
+        
+    }
+
+	
 }

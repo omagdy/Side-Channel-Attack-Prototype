@@ -9,9 +9,10 @@
 
 #include "probe.h"
 
-#define TIME_LOOP_THRESHOLD (50) 		// Time for capturing image numebrs, in Microseconds
+#define TIME_LOOP_THRESHOLD (50) 				// Time for capturing image numebrs, in Microseconds
+#define THRESHOLD_RENEWAL_LOOP (15000000)		// Microseconds
 
-char biggest_string[100];				//detected string
+char biggest_string[100];						// Detected string for part 3b
 
 void task_3a(){
 	int i;
@@ -28,10 +29,23 @@ void task_3a(){
     int number_detected_array[numbers_size];
     int access_detected;
 
+	struct timespec start, end;
+	uint64_t delta_us;
+	int tsc_flag;
+
+
     DETECTION_THRESHOLD = determing_tsc_threshold(1000);
 
     while(LOOPFOREVER)
     {
+
+    		clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+
+    		tsc_flag = 1;
+
+    		while(tsc_flag){
+
+
             for (i = 0; i < numbers_size; ++i)
             {
                 numbers_addr = numbers[i+1];
@@ -68,6 +82,16 @@ void task_3a(){
             }
 
             access_detected = 0;// Reset for next iteration
+    
+			clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+			delta_us = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000; //microseconds
+			if(delta_us>THRESHOLD_RENEWAL_LOOP){
+				tsc_flag=0;
+				}
+		}
+
+		DETECTION_THRESHOLD = determing_tsc_threshold(100);
+
     }
 }
 
@@ -162,7 +186,7 @@ int main(int argc, char *argv[]) {
 
         guessed_number = task_3b(monitor_duration);
 
-        printf("Number is %s\n", guessed_number);
+        printf("Guessed Number is %s\n", guessed_number);
         
     }
 
